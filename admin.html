@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background: #f9f9f9;
+        }
+        .box {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .student-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        .student-info div {
+            margin-bottom: 3px;
+            font-size: 14px;
+        }
+        .student-info strong {
+            font-size: 16px;
+            color: #007BFF;
+        }
+        button {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+        }
+        .red {
+            background: #dc3545;
+        }
+        .green {
+            background: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2>Student List</h2>
+        <div id="list"></div>
+    </div>
+
+    <script>
+        function loadStudents() {
+            let container = document.getElementById('list');
+            container.innerHTML = '';
+
+            let students = JSON.parse(localStorage.getItem('myStudents')) || [];
+
+            if (students.length === 0) {
+                container.innerHTML = "<p style='text-align:center;'>No students registered yet.</p>";
+                return;
+            }
+
+            students.forEach(student => {
+                let div = document.createElement('div');
+                div.className = 'student-row';
+                div.innerHTML = `
+                    <div class="student-info">
+                        <div><strong>${student.name}</strong> (${student.course})</div>
+                        <div>${student.email} | ${student.phone}</div>
+                    </div>
+                    <button class="${student.contacted ? 'green' : 'red'}" onclick="toggle(${student.id})">
+                        ${student.contacted ? 'Contacted' : 'Not Contacted'}
+                    </button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function toggle(targetId) {
+            let students = JSON.parse(localStorage.getItem('myStudents')) || [];
+
+            students = students.map(student => {
+                if (student.id === targetId) {
+                    student.contacted = !student.contacted;
+                }
+                return student;
+            });
+
+            localStorage.setItem('myStudents', JSON.stringify(students));
+            loadStudents();
+        }
+
+        loadStudents();
+
+    </script>
+</body>
+</html>
